@@ -29,7 +29,12 @@ public class layingItem extends FacingBlock implements Waterloggable, BlockEntit
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    protected MapCodec<? extends FacingBlock> getCodec() {
+        return null;
+    }
+
+    @Override
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (world.getBlockEntity(pos) instanceof layingItemBlockEntity entity && !player.isSneaking()) {
             entity.rotate(state, 2);
             return ActionResult.success(true);

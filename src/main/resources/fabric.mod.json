@@ -1,17 +1,17 @@
 {
 	"schemaVersion": 1,
 	"id": "item-placer",
-	"version": "${version}",
-	"name": "item-placer",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"version": "${1.3}",
+	"name": "Item placer",
+	"description": "Place any item on any block side",
 	"authors": [
-		"Me!"
+		"akicater"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"discord": "https://fabricmc.net/",
+		"github": "https://github.com/kiber-pacan/item-placer/tree/1.20.1-1.20.4"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/item-placer/icon.png",
 	"environment": "*",
 	"entrypoints": {
