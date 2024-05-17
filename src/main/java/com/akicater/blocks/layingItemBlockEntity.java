@@ -66,7 +66,7 @@ public class layingItemBlockEntity extends BlockEntity {
             }
         };
     }
-    void rotate(BlockState state, int degrees) {
+    public void rotate(BlockState state, float degrees) {
         switch (state.get(Properties.FACING)){
             case NORTH -> {
                 quaternionf.rotateLocalZ((float) Math.toRadians(degrees));
