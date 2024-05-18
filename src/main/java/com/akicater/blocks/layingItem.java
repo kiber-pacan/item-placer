@@ -29,19 +29,6 @@ public class layingItem extends FacingBlock implements Waterloggable, BlockEntit
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.getBlockEntity(pos) instanceof layingItemBlockEntity entity && !player.isSneaking()) {
-            entity.rotate(state, 2);
-            return ActionResult.success(true);
-        } else if (world.getBlockEntity(pos) instanceof layingItemBlockEntity entity && player.isSneaking()) {
-            entity.rotate(state, 8);
-            return ActionResult.success(true);
-        } else {
-            return ActionResult.PASS;
-        }
-    }
-
-    @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(Properties.FACING);
     }
@@ -101,7 +88,7 @@ public class layingItem extends FacingBlock implements Waterloggable, BlockEntit
             case DOWN -> {
                 return VoxelShapes.cuboid(0.125f, 0.0f, 0.125f, 0.875f, 0.125f, 0.875f);
             }
-        };
+        }
         return null;
     }
 }
