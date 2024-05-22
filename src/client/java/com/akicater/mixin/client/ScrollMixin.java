@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -32,7 +33,9 @@ public class ScrollMixin {
 				PacketByteBuf buf = PacketByteBufs.create();
 				buf.writeBlockPos(((BlockHitResult) MinecraftClient.getInstance().crosshairTarget).getBlockPos());
 				buf.writeFloat(3.6f * x + random.nextFloat(0.1f, 1f));
+				buf.writeBlockHitResult((BlockHitResult) MinecraftClient.getInstance().crosshairTarget);
 				ClientPlayNetworking.send(ITEMROTATE, buf);
+				MinecraftClient.getInstance().player.playSound(SoundEvents.BLOCK_DISPENSER_FAIL, 1,1.5f);
 			}
 		}
 	}
