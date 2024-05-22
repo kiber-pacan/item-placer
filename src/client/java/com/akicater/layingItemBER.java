@@ -27,14 +27,18 @@ public class layingItemBER implements BlockEntityRenderer<layingItemBlockEntity>
 
         int x = getLight(entity.getWorld(), entity.getPos());
 
-        matrices.push();
+        for (int i = 0; i < 6; i++) {
+            if(entity.directions.list.get(i)) {
+                matrices.push();
 
-        matrices.translate(entity.p.x,entity.p.y,entity.p.z);
-        matrices.scale(0.75F, 0.75F, 0.75F);
-        matrices.multiply(entity.quaternionf);
+                matrices.translate(entity.positions.get(i).x, entity.positions.get(i).y, entity.positions.get(i).z);
+                matrices.scale(0.75F, 0.75F, 0.75F);
+                matrices.multiply(entity.quaternions.list.get(i));
 
-        itemRenderer.renderItem(entity.getStack(), ModelTransformationMode.FIXED, x, overlay, matrices,vertexConsumers, entity.getWorld(),1);
+                itemRenderer.renderItem(entity.getStack(i), ModelTransformationMode.FIXED, x, overlay, matrices,vertexConsumers, entity.getWorld(),1);
 
-        matrices.pop();
+                matrices.pop();
+            }
+        }
     }
 }

@@ -20,8 +20,11 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
+import static com.akicater.Itemplacer.LAYING_ITEM;
+import static com.akicater.Itemplacer.dirToInt;
+
 public record ItemPlacePayload(BlockPos pos, BlockHitResult hitResult) implements CustomPayload {
-    public static final CustomPayload.Id<ItemPlacePayload> ID = CustomPayload.id("tutorial:block_highlight");
+    public static final CustomPayload.Id<ItemPlacePayload> ID = CustomPayload.id("item-placer:place_item");
     public static final PacketCodec<PacketByteBuf, ItemPlacePayload> CODEC = PacketCodec.of((value, buf) -> buf.writeBlockPos(value.pos).writeBlockHitResult(value.hitResult), buf -> new ItemPlacePayload(buf.readBlockPos(), buf.readBlockHitResult()));
 
     @Override
@@ -31,16 +34,32 @@ public record ItemPlacePayload(BlockPos pos, BlockHitResult hitResult) implement
     public static void receive(ServerPlayerEntity player, BlockPos pos, BlockHitResult hitResult) {
         ItemStack stack = player.getMainHandStack();
         World world = player.getEntityWorld();
-        if (stack != ItemStack.EMPTY && world.getBlockState(pos).getBlock() == Blocks.AIR) {
+        if (world.getBlockState(pos).getBlock() == Blocks.AIR) {
             player.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
             Direction dir = hitResult.getSide().getOpposite();
-            BlockState state = Itemplacer.LAYING_ITEM.getDefaultState().with(Properties.FACING, dir);
+            BlockState state = LAYING_ITEM.getDefaultState();
             world.setBlockState(pos, state);
+            state.initShapeCache();
             layingItemBlockEntity blockEntity = (layingItemBlockEntity)world.getChunk(pos).getBlockEntity(pos);
             if (blockEntity != null) {
-                blockEntity.setStack(stack);
+                int i = dirToInt(dir);
+                blockEntity.directions.list.set(i, true);
+                blockEntity.inventory.set(i, stack);
                 world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
                 blockEntity.markDirty();
+            }
+        } else if (world.getBlockState(pos).getBlock() == LAYING_ITEM) {
+            Direction dir = hitResult.getSide().getOpposite();
+            layingItemBlockEntity blockEntity = (layingItemBlockEntity)world.getChunk(pos).getBlockEntity(pos);
+            if (blockEntity != null) {
+                int i = dirToInt(dir);
+                if(blockEntity.inventory.get(i).isEmpty()) {
+                    player.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+                    blockEntity.directions.list.set(i, true);
+                    blockEntity.inventory.set(i, stack);
+                    world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+                    blockEntity.markDirty();
+                }
             }
         }
     }
