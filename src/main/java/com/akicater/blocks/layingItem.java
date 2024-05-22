@@ -63,7 +63,7 @@ public class layingItem extends Block implements Waterloggable, BlockEntityProvi
             if (isInventoryClear(blockEntity.inventory)) {
                 world.setBlockState(pos, Blocks.AIR.getDefaultState());
             }
-            world.playSound((double)pos.getX(),(double)pos.getY(),(double)pos.getZ(), SoundEvents.ITEM_BOOK_PUT, SoundCategory.BLOCKS,1f,1.5f,true);
+            world.playSound((double)pos.getX(),(double)pos.getY(),(double)pos.getZ(), SoundEvents.ENTITY_PAINTING_PLACE, SoundCategory.BLOCKS,1f,2f,true);
             return ActionResult.SUCCESS;
         }
         return ActionResult.FAIL;
