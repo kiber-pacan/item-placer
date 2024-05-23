@@ -11,6 +11,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -26,7 +27,7 @@ import static com.akicater.Itemplacer.dirToInt;
 public class ItemPlacePacket {
     public static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         ItemStack stack = player.getMainHandStack();
-        World world = player.getEntityWorld();
+        ServerWorld world = player.getServerWorld();
         BlockPos pos = buf.readBlockPos();
         if (world.getBlockState(pos).getBlock() == Blocks.AIR) {
             player.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);

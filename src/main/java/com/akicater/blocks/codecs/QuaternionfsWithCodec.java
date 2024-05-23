@@ -8,6 +8,7 @@ import org.joml.Quaternionf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class QuaternionfsWithCodec {
     public static final Codec<QuaternionfsWithCodec> CODEC = RecordCodecBuilder.create(
@@ -16,14 +17,16 @@ public class QuaternionfsWithCodec {
             ).apply(instance, QuaternionfsWithCodec::new)
     );
 
+    Random random = new Random();
+
     public List<Quaternionf> list = new ArrayList<>(
             List.of(
-                    RotationAxis.POSITIVE_X.rotationDegrees(0),     //SOUTH
-                    RotationAxis.POSITIVE_Y.rotationDegrees(180),   //NORTH
-                    RotationAxis.POSITIVE_Y.rotationDegrees(90),    //EAST
-                    RotationAxis.NEGATIVE_Y.rotationDegrees(90),    //WEST
-                    RotationAxis.NEGATIVE_X.rotationDegrees(90),    //UP
-                    RotationAxis.POSITIVE_X.rotationDegrees(90)     //DOWN
+                    RotationAxis.POSITIVE_X.rotationDegrees(0).rotateZ(random.nextFloat(-360,360)),     //SOUTH
+                    RotationAxis.POSITIVE_Y.rotationDegrees(180).rotateZ(random.nextFloat(-360,360)),   //NORTH
+                    RotationAxis.POSITIVE_Y.rotationDegrees(90).rotateZ(random.nextFloat(-360,360)),    //EAST
+                    RotationAxis.NEGATIVE_Y.rotationDegrees(90).rotateZ(random.nextFloat(-360,360)),    //WEST
+                    RotationAxis.NEGATIVE_X.rotationDegrees(90).rotateZ(random.nextFloat(-360,360)),    //UP
+                    RotationAxis.POSITIVE_X.rotationDegrees(90).rotateZ(random.nextFloat(-360,360))    //DOWN
             )
     );
 

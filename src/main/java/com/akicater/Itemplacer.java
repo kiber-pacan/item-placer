@@ -2,7 +2,10 @@ package com.akicater;
 
 import com.akicater.blocks.layingItem;
 import com.akicater.blocks.layingItemBlockEntity;
+import com.akicater.network.ItemPlacePacket;
+import com.akicater.network.RotateItemPacket;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.piston.PistonBehavior;
@@ -31,8 +34,13 @@ public class Itemplacer implements ModInitializer {
 			BlockEntityType.Builder.create(layingItemBlockEntity::new, LAYING_ITEM).build(null)
 	);
 
+	public static final Identifier ITEMPLACE = new Identifier(MODID, "itemplace");
+	public static final Identifier ITEMROTATE= new Identifier(MODID, "itemrotate");
+
 	@Override
 	public void onInitialize() {
+		ServerPlayNetworking.registerGlobalReceiver(ITEMPLACE, ItemPlacePacket::receive);
+		ServerPlayNetworking.registerGlobalReceiver(ITEMROTATE, RotateItemPacket::receive);
 		Registry.register(Registries.BLOCK, new Identifier(MODID, "laying_item"), LAYING_ITEM);
 	}
 

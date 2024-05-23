@@ -1,10 +1,7 @@
 package com.akicater.blocks.codecs;
 
-import com.mojang.datafixers.util.Either;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.math.Direction;
 
 import java.util.ArrayList;
 import java.util.List;
