@@ -2,7 +2,11 @@ package com.akicater;
 
 import com.akicater.blocks.layingItem;
 import com.akicater.blocks.layingItemBlockEntity;
+import com.akicater.network.ItemPlacePayload;
+import com.akicater.network.ItemRotatePayload;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.piston.PistonBehavior;
@@ -33,6 +37,15 @@ public class Itemplacer implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		PayloadTypeRegistry.playC2S().register(ItemPlacePayload.ID, ItemPlacePayload.CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(ItemPlacePayload.ID, (payload, handler) ->
+				payload.receive(handler.player(), payload.pos(), payload.hitResult())
+		);
+
+		PayloadTypeRegistry.playC2S().register(ItemRotatePayload.ID, ItemRotatePayload.CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(ItemRotatePayload.ID, (payload, handler) ->
+				payload.receive(handler.player(), payload.pos(), payload.degrees(), payload.hitResult())
+		);
 		Registry.register(Registries.BLOCK, new Identifier(MODID, "laying_item"), LAYING_ITEM);
 	}
 	public static int dirToInt(Direction dir) {

@@ -45,12 +45,12 @@ public class ItemplacerClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		BlockEntityRendererFactories.register(Itemplacer.LAYING_ITEM_BLOCK_ENTITY, layingItemBER::new);
 
-		PayloadTypeRegistry.playC2S().register(ItemPlacePayload.ID, ItemPlacePayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(ItemPlacePayload.ID, ItemPlacePayload.CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(ItemPlacePayload.ID, (payload, handler) ->
 				payload.receive(handler.player(), payload.pos(), payload.hitResult())
 		);
 
-		PayloadTypeRegistry.playC2S().register(ItemRotatePayload.ID, ItemRotatePayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(ItemRotatePayload.ID, ItemRotatePayload.CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(ItemRotatePayload.ID, (payload, handler) ->
 				payload.receive(handler.player(), payload.pos(), payload.degrees(), payload.hitResult())
 		);
