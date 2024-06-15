@@ -36,7 +36,6 @@ public class ScrollMixin {
 						(BlockHitResult) MinecraftClient.getInstance().crosshairTarget
 						);
 				ClientPlayNetworking.send(payload);
-				MinecraftClient.getInstance().player.playSound(SoundEvents.BLOCK_DISPENSER_FAIL, 0.35f,1.5f);
 			}
 		}
 	}
