@@ -3,7 +3,8 @@
 	"package": "com.akicater.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"ExampleClientMixin"
+		"ScrollDisableMixin",
+		"ScrollMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
