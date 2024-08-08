@@ -16,10 +16,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.akicater.Itemplacer"
+			"com.akicater.ItemPlacer"
 		],
 		"client": [
 			"com.akicater.ItemplacerClient"
+		],
+		"modmenu": [
+			"com.akicater.ModMenuApiImpl"
 		]
 	},
 	"mixins": [
@@ -36,6 +39,6 @@
 		"fabric-api": "*"
 	},
 	"suggests": {
-		"another-mod": "*"
+
 	}
 }
