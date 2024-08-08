@@ -26,8 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.akicater.Itemplacer.LOGGER;
-import static com.akicater.Itemplacer.getDirection;
+import static com.akicater.ItemPlacer.getDirection;
 
 public class layingItem extends Block implements Waterloggable, BlockEntityProvider {
 
@@ -60,7 +59,7 @@ public class layingItem extends Block implements Waterloggable, BlockEntityProvi
             if (isInventoryClear(blockEntity.inventory)) {
                 world.setBlockState(pos, Blocks.AIR.getDefaultState());
             }
-            world.playSound((double)pos.getX(),(double)pos.getY(),(double)pos.getZ(), SoundEvents.ENTITY_PAINTING_PLACE, SoundCategory.BLOCKS,1f,2f,true);
+            world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_PAINTING_PLACE, SoundCategory.BLOCKS, 1f, 2f, true);
             return ActionResult.SUCCESS;
         }
         return ActionResult.FAIL;
@@ -86,7 +85,7 @@ public class layingItem extends Block implements Waterloggable, BlockEntityProvi
             if (world.getBlockEntity(pos) instanceof layingItemBlockEntity entity) {
                 for (int i = 0; i < 6; i++) {
 
-                    ItemStack itemStack = entity.getStack(i);
+                    ItemStack itemStack = entity.inventory.get(i);
 
                     ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
 
@@ -103,22 +102,22 @@ public class layingItem extends Block implements Waterloggable, BlockEntityProvi
         layingItemBlockEntity entity = (layingItemBlockEntity) blockView.getBlockEntity(pos);
         List<VoxelShape> tempShape = new ArrayList<>();
         if (entity != null) {
-            if (entity.directions.list.get(0)) {
+            if (!entity.inventory.get(0).isEmpty()) {
                 tempShape.add(VoxelShapes.cuboid(0.125f, 0.125f, 0.875f, 0.875f, 0.875f, 1.0f));
             }
-            if (entity.directions.list.get(1)) {
+            if (!entity.inventory.get(1).isEmpty()) {
                 tempShape.add(VoxelShapes.cuboid(0.125f, 0.125f, 0.0f, 0.875f, 0.875f, 0.125f));
             }
-            if (entity.directions.list.get(2)) {
+            if (!entity.inventory.get(2).isEmpty()) {
                 tempShape.add(VoxelShapes.cuboid(0.875f, 0.125f, 0.125f, 1.0f, 0.875f, 0.875f));
             }
-            if (entity.directions.list.get(3)) {
+            if (!entity.inventory.get(3).isEmpty()) {
                 tempShape.add(VoxelShapes.cuboid(0.0f, 0.125f, 0.125f, 0.125f, 0.875f, 0.875f));
             }
-            if (entity.directions.list.get(4)) {
+            if (!entity.inventory.get(4).isEmpty()) {
                 tempShape.add(VoxelShapes.cuboid(0.125f, 0.875f, 0.125f, 0.875f, 1.0f, 0.875f));
             }
-            if (entity.directions.list.get(5)) {
+            if (!entity.inventory.get(5).isEmpty()) {
                 tempShape.add(VoxelShapes.cuboid(0.125f, 0.0f, 0.125f, 0.875f, 0.125f, 0.875f));
             }
         }
