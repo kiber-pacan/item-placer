@@ -14,6 +14,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Itemplacer implements ModInitializer {
-    public static final Logger LOGGER = LoggerFactory.getLogger("item-placer");
+	public static final Logger LOGGER = LoggerFactory.getLogger("item-placer");
 	public static final String MODID = "item-placer";
 
 	public static final layingItem LAYING_ITEM = new layingItem(Block.Settings.create().breakInstantly().nonOpaque().noBlockBreakParticles().pistonBehavior(PistonBehavior.DESTROY));
@@ -80,26 +81,34 @@ public class Itemplacer implements ModInitializer {
 				&& vec.z <= box.maxZ;
 	}
 
-	public static int getDirection(BlockHitResult hit) {
-		double xT = hit.getPos().getX();
-		double yT = hit.getPos().getY();
-		double zT = hit.getPos().getZ();
+	static List<Box> boxes = new ArrayList<>(
+			List.of(
+					new Box(0.125f, 0.125f, 0.875f, 0.875f, 0.875f, 1.0f),
+					new Box(0.125f, 0.125f, 0.0f, 0.875f, 0.875f, 0.125f),
+					new Box(0.875f, 0.125f, 0.125f, 1.0f, 0.875f, 0.875f),
+					new Box(0.0f, 0.125f, 0.125f, 0.125f, 0.875f, 0.875f),
+					new Box(0.125f, 0.875f, 0.125f, 0.875f, 1.0f, 0.875f),
+					new Box(0.125f, 0.0f, 0.125f, 0.875f, 0.125f, 0.875f)
+			)
+	);
 
-		double x = (xT > 0) ? xT - ((int)xT) : 1 - Math.abs(xT - ((int)xT));
-		double y = (yT > 0) ? yT - ((int)yT) : 1 - Math.abs(yT - ((int)yT));
-		double z = (zT > 0) ? zT - ((int)zT) : 1 - Math.abs(zT - ((int)zT));
+	public static int getDirection(BlockHitResult hit) {
+		double xT = hit.getPos().x;
+		double yT = hit.getPos().y;
+		double zT = hit.getPos().z;
+
+		BlockPos blockPos = hit.getBlockPos();
+
+		double x = (xT > 0) ? xT - blockPos.getX() : 1 - Math.abs(xT - blockPos.getX());
+		double y = (yT > 0) ? yT - blockPos.getY() : 1 - Math.abs(yT - blockPos.getY());
+		double z = (zT > 0) ? zT - blockPos.getZ() : 1 - Math.abs(zT - blockPos.getZ());
 
 		Vec3d pos = new Vec3d(x,y,z);
-		List<Box> boxes = new ArrayList<>(
-				List.of(
-						new Box(0.125f, 0.125f, 0.875f, 0.875f, 0.875f, 1.0f),
-						new Box(0.125f, 0.125f, 0.0f, 0.875f, 0.875f, 0.125f),
-						new Box(0.875f, 0.125f, 0.125f, 1.0f, 0.875f, 0.875f),
-						new Box(0.0f, 0.125f, 0.125f, 0.125f, 0.875f, 0.875f),
-						new Box(0.125f, 0.875f, 0.125f, 0.875f, 1.0f, 0.875f),
-						new Box(0.125f, 0.0f, 0.125f, 0.875f, 0.125f, 0.875f)
-				)
-		);
+
+		LOGGER.info(String.valueOf(hit.getBlockPos()));
+		LOGGER.info(String.valueOf(hit.getPos()));
+		LOGGER.info(String.valueOf(pos));
+
 		for (int i = 0; i < boxes.size(); i++) {
 			if (contains(pos, boxes.get(i))) {
 				return i;
