@@ -1,0 +1,8 @@
+{
+  "item.item-placer.laying_item": "Лежащий предмет",
+  "text.autoconfig.item-placer.option.absoluteSize": "Абсолютный размер",
+  "text.autoconfig.item-placer.option.tempItemSize": "Размер лежащего предмета",
+  "text.autoconfig.item-placer.option.tempBlockSize": "Размер лежащего блока",
+  "text.autoconfig.item-placer.option.oldRendering": "Старая отрисовка блоков"
+
+}
