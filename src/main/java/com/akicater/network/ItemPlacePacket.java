@@ -1,8 +1,6 @@
 package com.akicater.network;
 
-import com.akicater.Itemplacer;
 import com.akicater.blocks.layingItemBlockEntity;
-import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -12,17 +10,13 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
-import java.util.Objects;
-
-import static com.akicater.Itemplacer.LAYING_ITEM;
-import static com.akicater.Itemplacer.dirToInt;
+import static com.akicater.ItemPlacer.LAYING_ITEM;
+import static com.akicater.ItemPlacer.dirToInt;
 
 public class ItemPlacePacket {
     public static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
@@ -38,7 +32,6 @@ public class ItemPlacePacket {
             layingItemBlockEntity blockEntity = (layingItemBlockEntity)world.getChunk(pos).getBlockEntity(pos);
             if (blockEntity != null) {
                 int i = dirToInt(dir);
-                blockEntity.directions.list.set(i, true);
                 blockEntity.inventory.set(i, stack);
                 world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
                 blockEntity.markDirty();
@@ -50,7 +43,6 @@ public class ItemPlacePacket {
                 int i = dirToInt(dir);
                 if(blockEntity.inventory.get(i).isEmpty()) {
                     player.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
-                    blockEntity.directions.list.set(i, true);
                     blockEntity.inventory.set(i, stack);
                     world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
                     blockEntity.markDirty();
