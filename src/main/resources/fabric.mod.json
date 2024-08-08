@@ -16,7 +16,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.akicater.Itemplacer"
+			"com.akicater.ItemPlacer"
 		],
 		"client": [
 			"com.akicater.ItemplacerClient"
