@@ -1,12 +1,14 @@
 package com.akicater;
 
-import com.akicater.network.ItemPlacePayload;
-import com.akicater.network.ItemRotatePayload;
+import com.akicater.network.ItemPlacePacket;
+import com.akicater.network.RotateItemPacket;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -14,6 +16,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
@@ -21,7 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.lwjgl.glfw.GLFW;
 
-import static com.akicater.Itemplacer.MODID;
+import static com.akicater.ItemPlacer.MODID;
 
 public class ItemplacerClient implements ClientModInitializer {
 
@@ -43,26 +46,21 @@ public class ItemplacerClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		BlockEntityRendererFactories.register(Itemplacer.LAYING_ITEM_BLOCK_ENTITY, layingItemBER::new);
+		AutoConfig.register(ItemPlacerConfig.class, Toml4jConfigSerializer::new);
 
-		PayloadTypeRegistry.playS2C().register(ItemPlacePayload.ID, ItemPlacePayload.CODEC);
-		ServerPlayNetworking.registerGlobalReceiver(ItemPlacePayload.ID, (payload, handler) ->
-				payload.receive(handler.player(), payload.pos(), payload.hitResult())
-		);
-
-		PayloadTypeRegistry.playS2C().register(ItemRotatePayload.ID, ItemRotatePayload.CODEC);
-		ServerPlayNetworking.registerGlobalReceiver(ItemRotatePayload.ID, (payload, handler) ->
-				payload.receive(handler.player(), payload.pos(), payload.degrees(), payload.hitResult())
-		);
-
+		ServerPlayNetworking.registerGlobalReceiver(ITEMPLACE, ItemPlacePacket::receive);
+		ServerPlayNetworking.registerGlobalReceiver(ITEMROTATE, RotateItemPacket::receive);
+		BlockEntityRendererFactories.register(ItemPlacer.LAYING_ITEM_BLOCK_ENTITY, layingItemBER::new);
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (PLACE_KEY.wasPressed()) {
 				if (client.crosshairTarget instanceof BlockHitResult && client.player.getStackInHand(Hand.MAIN_HAND) != ItemStack.EMPTY && MinecraftClient.getInstance().world.getBlockState(((BlockHitResult) client.crosshairTarget).getBlockPos()).getBlock() != Blocks.AIR) {
+					PacketByteBuf buf = PacketByteBufs.create();
 					Direction side = ((BlockHitResult) client.crosshairTarget).getSide();
 					BlockPos pos = ((BlockHitResult) client.crosshairTarget).getBlockPos();
-					ItemPlacePayload payload = new ItemPlacePayload(pos.offset(side,1), (BlockHitResult) client.crosshairTarget);
-					ClientPlayNetworking.send(payload);
+					buf.writeBlockPos(pos.offset(side, 1));
+					buf.writeBlockHitResult((BlockHitResult) client.crosshairTarget);
+					ClientPlayNetworking.send(ITEMPLACE, buf);
 				}
 			}
 		});

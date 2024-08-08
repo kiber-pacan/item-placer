@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.akicater.Itemplacer.LAYING_ITEM;
+import static com.akicater.ItemPlacer.LAYING_ITEM;
 import static com.akicater.ItemplacerClient.STOP_SCROLLING_KEY;
 
 @Mixin(PlayerInventory.class)
