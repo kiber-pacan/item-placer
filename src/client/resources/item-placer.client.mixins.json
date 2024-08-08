@@ -4,8 +4,7 @@
 	"compatibilityLevel": "JAVA_17",
 	"client": [
 		"ScrollDisableMixin",
-		"ScrollMixin",
-		"CanScrollMixin"
+		"ScrollMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
