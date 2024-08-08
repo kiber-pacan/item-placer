@@ -2,6 +2,8 @@ package com.akicater;
 
 import com.akicater.network.ItemPlacePacket;
 import com.akicater.network.RotateItemPacket;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -22,7 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.lwjgl.glfw.GLFW;
 
-import static com.akicater.Itemplacer.MODID;
+import static com.akicater.ItemPlacer.MODID;
 
 public class ItemplacerClient implements ClientModInitializer {
 
@@ -44,9 +46,11 @@ public class ItemplacerClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		AutoConfig.register(ItemPlacerConfig.class, Toml4jConfigSerializer::new);
+
 		ServerPlayNetworking.registerGlobalReceiver(ITEMPLACE, ItemPlacePacket::receive);
 		ServerPlayNetworking.registerGlobalReceiver(ITEMROTATE, RotateItemPacket::receive);
-		BlockEntityRendererFactories.register(Itemplacer.LAYING_ITEM_BLOCK_ENTITY, layingItemBER::new);
+		BlockEntityRendererFactories.register(ItemPlacer.LAYING_ITEM_BLOCK_ENTITY, layingItemBER::new);
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (PLACE_KEY.wasPressed()) {
