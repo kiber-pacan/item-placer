@@ -16,10 +16,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.akicater.Itemplacer"
+			"com.akicater.ItemPlacer"
 		],
 		"client": [
 			"com.akicater.ItemplacerClient"
+		],
+		"modmenu": [
+			"com.akicater.ModMenuApiImpl"
 		]
 	},
 	"mixins": [
@@ -31,7 +34,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.10",
-		"minecraft": "~1.20.1",
+		"minecraft": "~1.20.5",
 		"java": ">=17",
 		"fabric-api": "*"
 	},

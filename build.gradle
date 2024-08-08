@@ -15,9 +15,6 @@ repositories {
 		url = "https://maven.shedaniel.me/"
 	}
 	maven {
-		url = "https://maven.terraformersmc.com/releases/"
-	}
-	maven {
 		name = "Terraformers"
 		url = "https://maven.terraformersmc.com/"
 	}
