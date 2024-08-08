@@ -51,7 +51,7 @@ public class layingItem extends FacingBlock implements Waterloggable, BlockEntit
             if (isInventoryClear(blockEntity.inventory)) {
                 world.setBlockState(pos, Blocks.AIR.getDefaultState());
             }
-            world.playSound((double)pos.getX(),(double)pos.getY(),(double)pos.getZ(), SoundEvents.ENTITY_PAINTING_PLACE, SoundCategory.BLOCKS,1f,2f,true);
+            world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_PAINTING_PLACE, SoundCategory.BLOCKS, 1f, 2f, true);
             return ActionResult.SUCCESS;
         }
         return ActionResult.FAIL;
