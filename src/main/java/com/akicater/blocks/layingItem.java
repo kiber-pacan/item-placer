@@ -1,15 +1,13 @@
+
 package com.akicater.blocks;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
@@ -29,29 +27,40 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.akicater.Itemplacer.getDirection;
+import static com.akicater.ItemPlacer.getDirection;
 
-public class layingItem extends FacingBlock implements Waterloggable, BlockEntityProvider {
+public class layingItem extends Block implements Waterloggable, BlockEntityProvider {
 
     public layingItem(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(Properties.FACING, Direction.NORTH));
+
     }
 
     @Override
-    protected MapCodec<? extends FacingBlock> getCodec() {
-        return null;
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        //builder.add(Properties.FACING);
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+    public BlockState getAppearance(BlockState state, BlockRenderView renderView, BlockPos pos, Direction side, @Nullable BlockState sourceState, @Nullable BlockPos sourcePos) {
+        return super.getAppearance(state, renderView, pos, side, sourceState, sourcePos);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new layingItemBlockEntity(pos, state);
+    }
+
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         layingItemBlockEntity blockEntity = (layingItemBlockEntity)world.getChunk(pos).getBlockEntity(pos);
         if (blockEntity != null) {
             blockEntity.dropItem(getDirection(hit));
             if (isInventoryClear(blockEntity.inventory)) {
                 world.setBlockState(pos, Blocks.AIR.getDefaultState());
             }
-            world.playSound((double)pos.getX(),(double)pos.getY(),(double)pos.getZ(), SoundEvents.ENTITY_PAINTING_PLACE, SoundCategory.BLOCKS,1f,2f,true);
+            world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_PAINTING_PLACE, SoundCategory.BLOCKS, 1f, 2f, true);
             return ActionResult.SUCCESS;
         }
         return ActionResult.FAIL;
@@ -67,36 +76,17 @@ public class layingItem extends FacingBlock implements Waterloggable, BlockEntit
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.FACING);
-    }
-
-    @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return super.getPlacementState(ctx).with(Properties.FACING, ctx.getHorizontalPlayerFacing().getOpposite());
-    }
-
-    @Override
-    public BlockState getAppearance(BlockState state, BlockRenderView renderView, BlockPos pos, Direction side, @Nullable BlockState sourceState, @Nullable BlockPos sourcePos) {
-        return super.getAppearance(state, renderView, pos, side, sourceState, sourcePos);
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new layingItemBlockEntity(pos, state);
-    }
-    @Override
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.INVISIBLE;
     }
+
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.isOf(newState.getBlock())) {
             if (world.getBlockEntity(pos) instanceof layingItemBlockEntity entity) {
                 for (int i = 0; i < 6; i++) {
 
-                    ItemStack itemStack = entity.getStack(i);
+                    ItemStack itemStack = entity.inventory.get(i);
 
                     ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
 
@@ -107,27 +97,28 @@ public class layingItem extends FacingBlock implements Waterloggable, BlockEntit
             super.onStateReplaced(state, world, pos, newState, moved);
         }
     }
+
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView blockView, BlockPos pos, ShapeContext context) {
         layingItemBlockEntity entity = (layingItemBlockEntity) blockView.getBlockEntity(pos);
         List<VoxelShape> tempShape = new ArrayList<>();
         if (entity != null) {
-            if (entity.directions.list.get(0)) {
+            if (!entity.inventory.get(0).isEmpty()) {
                 tempShape.add(VoxelShapes.cuboid(0.125f, 0.125f, 0.875f, 0.875f, 0.875f, 1.0f));
             }
-            if (entity.directions.list.get(1)) {
+            if (!entity.inventory.get(1).isEmpty()) {
                 tempShape.add(VoxelShapes.cuboid(0.125f, 0.125f, 0.0f, 0.875f, 0.875f, 0.125f));
             }
-            if (entity.directions.list.get(2)) {
+            if (!entity.inventory.get(2).isEmpty()) {
                 tempShape.add(VoxelShapes.cuboid(0.875f, 0.125f, 0.125f, 1.0f, 0.875f, 0.875f));
             }
-            if (entity.directions.list.get(3)) {
+            if (!entity.inventory.get(3).isEmpty()) {
                 tempShape.add(VoxelShapes.cuboid(0.0f, 0.125f, 0.125f, 0.125f, 0.875f, 0.875f));
             }
-            if (entity.directions.list.get(4)) {
+            if (!entity.inventory.get(4).isEmpty()) {
                 tempShape.add(VoxelShapes.cuboid(0.125f, 0.875f, 0.125f, 0.875f, 1.0f, 0.875f));
             }
-            if (entity.directions.list.get(5)) {
+            if (!entity.inventory.get(5).isEmpty()) {
                 tempShape.add(VoxelShapes.cuboid(0.125f, 0.0f, 0.125f, 0.875f, 0.125f, 0.875f));
             }
         }

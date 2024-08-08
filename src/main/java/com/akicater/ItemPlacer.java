@@ -1,3 +1,4 @@
+
 package com.akicater;
 
 import com.akicater.blocks.layingItem;
@@ -24,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Itemplacer implements ModInitializer {
+public class ItemPlacer implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("item-placer");
 	public static final String MODID = "item-placer";
 
@@ -99,22 +100,18 @@ public class Itemplacer implements ModInitializer {
 
 		BlockPos blockPos = hit.getBlockPos();
 
-		double x = (xT > 0) ? xT - blockPos.getX() : 1 - Math.abs(xT - blockPos.getX());
-		double y = (yT > 0) ? yT - blockPos.getY() : 1 - Math.abs(yT - blockPos.getY());
-		double z = (zT > 0) ? zT - blockPos.getZ() : 1 - Math.abs(zT - blockPos.getZ());
+		double x = (xT > 0) ? xT - blockPos.getX() : Math.abs(xT - blockPos.getX());
+		double y = (yT > 0) ? yT - blockPos.getY() : Math.abs(yT - blockPos.getY());
+		double z = (zT > 0) ? zT - blockPos.getZ() : Math.abs(zT - blockPos.getZ());
 
 		Vec3d pos = new Vec3d(x,y,z);
-
-		LOGGER.info(String.valueOf(hit.getBlockPos()));
-		LOGGER.info(String.valueOf(hit.getPos()));
-		LOGGER.info(String.valueOf(pos));
 
 		for (int i = 0; i < boxes.size(); i++) {
 			if (contains(pos, boxes.get(i))) {
 				return i;
 			}
 		}
-		LOGGER.warn("Somehow you got error? damn... Maybe my mod is fucking garbage? (item-placer)");
+		LOGGER.warn("Somehow you got warning? damn... Maybe my mod is fucking garbage? (item-placer)");
 		return 0;
 	}
 }
