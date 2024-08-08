@@ -2,9 +2,10 @@ package com.akicater;
 
 import com.akicater.blocks.layingItem;
 import com.akicater.blocks.layingItemBlockEntity;
-import com.akicater.network.ItemPlacePacket;
-import com.akicater.network.RotateItemPacket;
+import com.akicater.network.ItemPlacePayload;
+import com.akicater.network.ItemRotatePayload;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
@@ -35,16 +36,19 @@ public class ItemPlacer implements ModInitializer {
 			BlockEntityType.Builder.create(layingItemBlockEntity::new, LAYING_ITEM).build(null)
 	);
 
-	public static final Identifier ITEMPLACE = new Identifier(MODID, "itemplace");
-	public static final Identifier ITEMROTATE= new Identifier(MODID, "itemrotate");
-
 	@Override
 	public void onInitialize() {
-		ServerPlayNetworking.registerGlobalReceiver(ITEMPLACE, ItemPlacePacket::receive);
-		ServerPlayNetworking.registerGlobalReceiver(ITEMROTATE, RotateItemPacket::receive);
+		PayloadTypeRegistry.playC2S().register(ItemPlacePayload.ID, ItemPlacePayload.CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(ItemPlacePayload.ID, (payload, handler) ->
+				payload.receive(handler.player(), payload.pos(), payload.hitResult())
+		);
+
+		PayloadTypeRegistry.playC2S().register(ItemRotatePayload.ID, ItemRotatePayload.CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(ItemRotatePayload.ID, (payload, handler) ->
+				payload.receive(handler.player(), payload.pos(), payload.degrees(), payload.hitResult())
+		);
 		Registry.register(Registries.BLOCK, new Identifier(MODID, "laying_item"), LAYING_ITEM);
 	}
-
 	public static int dirToInt(Direction dir) {
 		return switch (dir) {
 			case SOUTH -> 0;
@@ -53,7 +57,7 @@ public class ItemPlacer implements ModInitializer {
 			case WEST -> 3;
 			case UP -> 4;
 			case DOWN -> 5;
-		};
+        };
 	}
 
 	public static Direction intToDir(int dir) {
