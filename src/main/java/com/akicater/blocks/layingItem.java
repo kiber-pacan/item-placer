@@ -52,7 +52,7 @@ public class layingItem extends Block implements Waterloggable, BlockEntityProvi
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         layingItemBlockEntity blockEntity = (layingItemBlockEntity)world.getChunk(pos).getBlockEntity(pos);
         if (blockEntity != null) {
             blockEntity.dropItem(getDirection(hit));

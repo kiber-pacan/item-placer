@@ -1,5 +1,6 @@
 package com.akicater.mixin.client;
 
+import com.akicater.network.ItemRotatePayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
@@ -30,11 +31,12 @@ public class ScrollMixin {
 		if (STOP_SCROLLING_KEY.isPressed()) {
 			int x = (int) Math.signum(vertical);
 			if (MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult) {
-				PacketByteBuf buf = PacketByteBufs.create();
-				buf.writeBlockPos(((BlockHitResult) MinecraftClient.getInstance().crosshairTarget).getBlockPos());
-				buf.writeFloat(3.6f * x + random.nextFloat(0.1f, 1f));
-				buf.writeBlockHitResult((BlockHitResult) MinecraftClient.getInstance().crosshairTarget);
-				ClientPlayNetworking.send(ITEMROTATE, buf);
+				ItemRotatePayload payload = new ItemRotatePayload(
+						((BlockHitResult) MinecraftClient.getInstance().crosshairTarget).getBlockPos(),
+						3.6f * x + random.nextFloat(0.1f, 1f),
+						(BlockHitResult) MinecraftClient.getInstance().crosshairTarget
+				);
+				ClientPlayNetworking.send(payload);
 			}
 		}
 	}
