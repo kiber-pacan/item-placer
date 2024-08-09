@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "item-placer",
-	"version": "${1.6}",
+	"version": "${mod_version}",
 	"name": "Item placer",
 	"description": "Place any item on any block side",
 	"authors": [
