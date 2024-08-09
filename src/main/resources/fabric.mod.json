@@ -20,6 +20,9 @@
 		],
 		"client": [
 			"com.akicater.ItemplacerClient"
+		],
+		"modmenu": [
+			"com.akicater.ModMenuApiImpl"
 		]
 	},
 	"mixins": [
