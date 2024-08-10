@@ -80,14 +80,16 @@ public class layingItemBER implements BlockEntityRenderer<layingItemBlockEntity>
 
                 matrices.translate(entity.positions.get(i).x, entity.positions.get(i).y, entity.positions.get(i).z);
 
+                // Differentiate item and block rendering
                 if(item.getItem() instanceof BlockItem) {
-                    matrices.scale(blockSize, blockSize, blockSize);
+                    // Differentiate new and old block rendering
                     if (!oldRendering) {
                         matrices.multiply(rotateX(Math.toRadians(-90), rotateZ(Math.toRadians(entity.rotation.list.get(i)), list.get(i))));
-                        matrices.translate(0,0.225 * blockSize,0);
+                        matrices.translate(0,0.25 * blockSize - 0.025,0);
                     } else {
                         matrices.multiply(rotateZ(Math.toRadians(entity.rotation.list.get(i)), list.get(i)));
                     }
+                    matrices.scale(blockSize, blockSize, blockSize);
                 } else {
                     matrices.scale(itemSize, itemSize, itemSize);
                     matrices.multiply(rotateZ(Math.toRadians(entity.rotation.list.get(i)), list.get(i)));
