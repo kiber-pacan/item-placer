@@ -1,12 +1,20 @@
+
 package com.akicater.blocks;
 
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.enums.BlockHalf;
+import net.minecraft.block.enums.StairShape;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.Properties;
+import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
@@ -20,6 +28,7 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -29,15 +38,25 @@ import java.util.Optional;
 import static com.akicater.ItemPlacer.getDirection;
 
 public class layingItem extends Block implements Waterloggable, BlockEntityProvider {
+    public static BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
 
     public layingItem(Settings settings) {
         super(settings);
-
+        setDefaultState(this.stateManager.getDefaultState().with(WATERLOGGED, false));
     }
 
-    @Override
+    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+        if (state.get(WATERLOGGED)) world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+
+        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+    }
+
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        //builder.add(Properties.FACING);
+        builder.add(WATERLOGGED);
+    }
+
+    public FluidState getFluidState(BlockState state) {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
     }
 
     @Override
@@ -57,7 +76,11 @@ public class layingItem extends Block implements Waterloggable, BlockEntityProvi
         if (blockEntity != null) {
             blockEntity.dropItem(getDirection(hit));
             if (isInventoryClear(blockEntity.inventory)) {
-                world.setBlockState(pos, Blocks.AIR.getDefaultState());
+                if (state.get(WATERLOGGED)) {
+                    world.setBlockState(pos, Blocks.WATER.getDefaultState());
+                } else {
+                    world.setBlockState(pos, Blocks.AIR.getDefaultState());
+                }
             }
             world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_PAINTING_PLACE, SoundCategory.BLOCKS, 1f, 2f, true);
             return ActionResult.SUCCESS;
