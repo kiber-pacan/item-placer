@@ -11,6 +11,7 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -28,10 +29,13 @@ public record ItemPlacePayload(BlockPos pos, BlockHitResult hitResult) implement
     public static void receive(ServerPlayerEntity player, BlockPos pos, BlockHitResult hitResult) {
         ItemStack stack = player.getMainHandStack();
         ServerWorld world = player.getServerWorld();
-        if (world.getBlockState(pos).getBlock() == Blocks.AIR) {
+        if (world.getBlockState(pos).getBlock() == Blocks.AIR || world.getBlockState(pos).getBlock() == Blocks.WATER) {
             player.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
             Direction dir = hitResult.getSide().getOpposite();
             BlockState state = ItemPlacer.LAYING_ITEM.getDefaultState();
+            if (world.getBlockState(pos).getBlock() == Blocks.WATER) {
+                state = state.with(Properties.WATERLOGGED, true);
+            }
             world.setBlockState(pos, state);
             state.initShapeCache();
             layingItemBlockEntity blockEntity = (layingItemBlockEntity)world.getChunk(pos).getBlockEntity(pos);
